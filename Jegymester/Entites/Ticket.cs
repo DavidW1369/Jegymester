@@ -8,5 +8,6 @@
         public bool Cancellable { get; set; }
         public int TicketOrderId { get; set; }
 
+        public Screening Screening { get; set; }
     }
 }

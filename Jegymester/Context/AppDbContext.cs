@@ -17,6 +17,9 @@ namespace Jegymester.Context
         public DbSet<TicketOrder> TicketOrders { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
 
-
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite("Data Source=Jegymester.db");
+        }
     }
 }

@@ -1,6 +1,7 @@
 using Jegymester.Context;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,9 +11,15 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer("Server=(local);Database=JegymesterDb;Trusted_Connection=True;TrustServerCertificate=True;"));
+    options.UseSqlite("Data Source=Jegymester.db"));
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated(); // ha nincs ilyen db akkor létrehozza/biztosítja h létre legyen hozva
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
