@@ -15,7 +15,7 @@ namespace Jegymester.Context
         public DbSet<Screening> Screenings { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketOrder> TicketOrders { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
+        
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
