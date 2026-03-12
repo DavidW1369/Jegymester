@@ -1,12 +1,190 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\\u00DAj mappa\\",
-  "Documents": [],
+  "WorkspaceRootPath": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Migrations\\20260311161820_Init.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Jegymester\\Migrations\\20260311161820_Init.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|d:\\sulis dolgok\\rendszerfejleszt\u00E9s\\jegymester\\jegymester\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|solutionrelative:jegymester\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|d:\\sulis dolgok\\rendszerfejleszt\u00E9s\\jegymester\\jegymester\\entites\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|solutionrelative:jegymester\\entites\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|d:\\sulis dolgok\\rendszerfejleszt\u00E9s\\jegymester\\jegymester\\entites\\transaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|solutionrelative:jegymester\\entites\\transaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|d:\\sulis dolgok\\rendszerfejleszt\u00E9s\\jegymester\\jegymester\\context\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|solutionrelative:jegymester\\context\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|d:\\sulis dolgok\\rendszerfejleszt\u00E9s\\jegymester\\jegymester\\entites\\ticket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|solutionrelative:jegymester\\entites\\ticket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|d:\\sulis dolgok\\rendszerfejleszt\u00E9s\\jegymester\\jegymester\\entites\\ticketorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|solutionrelative:jegymester\\entites\\ticketorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|d:\\sulis dolgok\\rendszerfejleszt\u00E9s\\jegymester\\jegymester\\entites\\screening.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|solutionrelative:jegymester\\entites\\screening.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|d:\\sulis dolgok\\rendszerfejleszt\u00E9s\\jegymester\\jegymester\\entites\\room.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|solutionrelative:jegymester\\entites\\room.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|d:\\sulis dolgok\\rendszerfejleszt\u00E9s\\jegymester\\jegymester\\entites\\movie.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B638100-4CBC-4014-86C2-4C64C88825CB}|Jegymester\\Jegymester.csproj|solutionrelative:jegymester\\entites\\movie.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "20260311161820_Init.cs",
+              "DocumentMoniker": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Migrations\\20260311161820_Init.cs",
+              "RelativeDocumentMoniker": "Jegymester\\Migrations\\20260311161820_Init.cs",
+              "ToolTip": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Migrations\\20260311161820_Init.cs",
+              "RelativeToolTip": "Jegymester\\Migrations\\20260311161820_Init.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-11T16:18:20.469Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Program.cs",
+              "RelativeDocumentMoniker": "Jegymester\\Program.cs",
+              "ToolTip": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Program.cs",
+              "RelativeToolTip": "Jegymester\\Program.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-11T15:45:36.273Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Context\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Jegymester\\Context\\AppDbContext.cs",
+              "ToolTip": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Context\\AppDbContext.cs",
+              "RelativeToolTip": "Jegymester\\Context\\AppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-11T15:39:15.723Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Transaction.cs",
+              "DocumentMoniker": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\Transaction.cs",
+              "RelativeDocumentMoniker": "Jegymester\\Entites\\Transaction.cs",
+              "ToolTip": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\Transaction.cs",
+              "RelativeToolTip": "Jegymester\\Entites\\Transaction.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-11T15:13:58.737Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Screening.cs",
+              "DocumentMoniker": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\Screening.cs",
+              "RelativeDocumentMoniker": "Jegymester\\Entites\\Screening.cs",
+              "ToolTip": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\Screening.cs",
+              "RelativeToolTip": "Jegymester\\Entites\\Screening.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-11T15:13:41.025Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Movie.cs",
+              "DocumentMoniker": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\Movie.cs",
+              "RelativeDocumentMoniker": "Jegymester\\Entites\\Movie.cs",
+              "ToolTip": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\Movie.cs",
+              "RelativeToolTip": "Jegymester\\Entites\\Movie.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-11T15:13:34.187Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Room.cs",
+              "DocumentMoniker": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\Room.cs",
+              "RelativeDocumentMoniker": "Jegymester\\Entites\\Room.cs",
+              "ToolTip": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\Room.cs",
+              "RelativeToolTip": "Jegymester\\Entites\\Room.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-11T15:13:28.077Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "TicketOrder.cs",
+              "DocumentMoniker": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\TicketOrder.cs",
+              "RelativeDocumentMoniker": "Jegymester\\Entites\\TicketOrder.cs",
+              "ToolTip": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\TicketOrder.cs",
+              "RelativeToolTip": "Jegymester\\Entites\\TicketOrder.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-11T15:13:21.657Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Ticket.cs",
+              "DocumentMoniker": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\Ticket.cs",
+              "RelativeDocumentMoniker": "Jegymester\\Entites\\Ticket.cs",
+              "ToolTip": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\Ticket.cs",
+              "RelativeToolTip": "Jegymester\\Entites\\Ticket.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-11T15:13:14.71Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "User.cs",
+              "DocumentMoniker": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\User.cs",
+              "RelativeDocumentMoniker": "Jegymester\\Entites\\User.cs",
+              "ToolTip": "D:\\Sulis dolgok\\rendszerfejleszt\u00E9s\\Jegymester\\Jegymester\\Entites\\User.cs",
+              "RelativeToolTip": "Jegymester\\Entites\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-11T15:05:11.901Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

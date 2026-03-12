@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Jegymester")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5ec5d5b9876a157d1a9078fd98a208ca8fd9b188")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8ba7bbc912541bd6f57c90d26a57ae6066e4364e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Jegymester")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Jegymester")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
