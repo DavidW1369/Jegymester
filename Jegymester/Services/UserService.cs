@@ -1,4 +1,5 @@
 ﻿using Jegymester.Context;
+using Jegymester.DTOs;
 using Jegymester.Entites;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,18 +17,20 @@ namespace Jegymester.Services
         // Jegyvásárlás (Regisztrált és Vendég egyaránt)
         public void PurchaseTickets(TicketOrder order)
         {
-            var screening = _db.Screenings.Include(s => s.Room).FirstOrDefault(s => s.Id == order.Tickets.First().ScreeningId);
+            // Megkeressük a felhasználót az email alapján
+            var user = _db.Users.FirstOrDefault(u => u.Email == order.Email);
 
-            // Szabad helyek ellenőrzése
-            int bookedSeats = _db.Tickets.Count(t => t.ScreeningId == screening.Id);
-            if (bookedSeats + order.Tickets.Count > screening.Room.Capacity)
-                throw new Exception("Nincs elég szabad hely a teremben!");
+            if (user == null)
+            {
+                if (string.IsNullOrEmpty(order.PhoneNumber))
+                    throw new Exception("Vendégként kötelező megadni a telefonszámot!");
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(order.PhoneNumber))
+                    order.PhoneNumber = user.PhoneNumber;
+            }
 
-            // Vendég adatok ellenőrzése (ha nincs UserId)
-            if (order.UserId == null && (string.IsNullOrEmpty(order.Email) || string.IsNullOrEmpty(order.PhoneNumber)))
-                throw new Exception("Vendégként kötelező megadni az e-mailt és telefonszámot!");
-
-            order.PurchaseTime = DateTime.Now;
             _db.TicketOrders.Add(order);
             _db.SaveChanges();
         }
@@ -54,10 +57,10 @@ namespace Jegymester.Services
             _db.SaveChanges();
         }
 
-        public List<TicketOrder> GetUserOrders(int userId)
+        public List<TicketOrder> GetOrdersByEmail(string email)
         {
             return _db.TicketOrders
-                .Where(o => o.UserId == userId)
+                .Where(o => o.Email == email)
                 .Include(o => o.Tickets)
                     .ThenInclude(t => t.Screening)
                     .ThenInclude(s => s.Movie)
@@ -65,6 +68,39 @@ namespace Jegymester.Services
                 .ToList();
         }
 
+        public void RegisterUser(RegisterDto dto)
+        {
+            // Ellenőrizzük, hogy létezik-e már ilyen emaillel felhasználó
+            if (_db.Users.Any(u => u.Email == dto.Email))
+                throw new Exception("Ezzel az e-mail címmel már regisztráltak!");
 
+            var newUser = new User
+            {
+                Name = dto.Name,
+                Email = dto.Email,
+                Password = dto.Password, // Éles környezetben itt hashelni kellene!
+                PhoneNumber = dto.PhoneNumber,
+                Role = Role.RegisteredUser // Alapértelmezett szerepkör
+            };
+
+            _db.Users.Add(newUser);
+            _db.SaveChanges();
+        }
+        // UserService.cs
+        public User Login(string email, string password)
+        {
+            // Itt a _db változót használjuk, ami már létezik a Service-ben
+            return _db.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
+        }
+
+        // UserService.cs
+        public List<string> GetBookedSeats(int screeningId)
+        {
+            // Itt a _db-t használjuk, ami a Service-ben az adatbázisod neve
+            return _db.Tickets
+                .Where(t => t.ScreeningId == screeningId)
+                .Select(t => t.Seat)
+                .ToList();
+        }
     }
 }

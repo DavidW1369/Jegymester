@@ -3,6 +3,7 @@ using System;
 using Jegymester.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jegymester.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260429120306_initcorr")]
+    partial class initcorr
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.14");
@@ -86,9 +89,6 @@ namespace Jegymester.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("ScreeningId")
                         .HasColumnType("INTEGER");
 
@@ -125,7 +125,12 @@ namespace Jegymester.Migrations
                     b.Property<DateTime>("PurchaseTime")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TicketOrders");
                 });
@@ -194,6 +199,15 @@ namespace Jegymester.Migrations
                         .IsRequired();
 
                     b.Navigation("Screening");
+                });
+
+            modelBuilder.Entity("Jegymester.Entites.TicketOrder", b =>
+                {
+                    b.HasOne("Jegymester.Entites.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Jegymester.Entites.TicketOrder", b =>

@@ -1,4 +1,5 @@
 ﻿using Jegymester.Context;
+using Jegymester.Entites;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jegymester.Services
@@ -9,16 +10,36 @@ namespace Jegymester.Services
         public CashierService(AppDbContext db) => _db = db;
 
         // Jegy érvényesítése (pl. beléptetéskor)
-        public bool ValidateTicket(int ticketId)
+        public string ValidateTicket(int ticketId)
         {
-            var ticket = _db.Tickets.Include(t => t.Screening).FirstOrDefault(t => t.Id == ticketId);
-            if (ticket == null) return false;
+            var ticket = _db.Tickets
+                .Include(t => t.Screening)
+                .ThenInclude(s => s.Movie)
+                .FirstOrDefault(t => t.Id == ticketId);
 
-            // Csak akkor érvényes, ha a vetítés még nem múlt el
-            return ticket.Screening.StartTime > DateTime.Now.AddHours(-3);
+            if (ticket == null) return "A jegy nem létezik!";
+
+            if (ticket.IsUsed) return "Ezt a jegyet már felhasználták!";
+
+            // Időellenőrzés (amit te írtál)
+            bool isTimeValid = ticket.Screening.StartTime > DateTime.Now.AddHours(-3)
+                               && ticket.Screening.StartTime < DateTime.Now.AddHours(1);
+            // Plusz infó: ne engedjük be 1 órával a kezdés előttnél hamarabb
+
+            if (!isTimeValid) return "A jegy nem erre az időpontra szól, vagy már lejárt!";
+
+            // Ha minden oké, érvényesítjük
+            ticket.IsUsed = true;
+            _db.SaveChanges();
+
+            return $"OK: Belépés engedélyezve! ({ticket.Screening.Movie.Name}, Szék: {ticket.Seat})";
         }
 
-        // A pénztáros ugyanazt a PurchaseTickets-et hívhatja meg a UserService-ből, 
-        // de ő adja meg a fizikai vásárló adatait.
+        public void ProcessCashierPurchase(TicketOrder order)
+        {
+            // Itt jöhetnek extra ellenőrzések (pl. fizetési mód: készpénz/kártya naplózása)
+            _db.TicketOrders.Add(order);
+            _db.SaveChanges();
+        }
     }
 }
