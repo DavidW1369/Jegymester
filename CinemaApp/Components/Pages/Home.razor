@@ -1,0 +1,44 @@
+@page "/"
+@rendermode InteractiveServer
+@inject FilmService FilmService
+
+<PageTitle>Films</PageTitle>
+<h1>Now Showing</h1>
+
+@if (films is null)
+{
+    <p>Loading…</p>
+}
+else if (!films.Any())
+{
+    <p>No films currently listed.</p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var film in films)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@film.Title</h5>
+                        <p class="card-text text-muted small">@film.DurationMinutes min</p>
+                        <p class="card-text">@film.Description</p>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-primary btn-sm" href="/film/@film.Id">
+                            View Screenings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Film>? films;
+
+    protected override async Task OnInitializedAsync() =>
+        films = await FilmService.GetAllAsync();
+}

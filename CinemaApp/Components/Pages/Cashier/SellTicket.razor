@@ -1,0 +1,198 @@
+@page "/cashier/sell"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Cashier,Admin")]
+@inject TicketService TicketService
+@inject ScreeningService ScreeningService
+@inject FilmService FilmService
+@inject UserManager<AppUser> UserManager
+@inject NavigationManager Nav
+
+<PageTitle>Sell Ticket</PageTitle>
+<h1>Sell Ticket (In-Person)</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-auto">
+        <label class="form-label">Film</label>
+        <select class="form-select" @onchange="OnFilmChangedAsync">
+            <option value="">— select film —</option>
+            @foreach (var f in films)
+            {
+                <option value="@f.Id">@f.Title</option>
+            }
+        </select>
+    </div>
+
+    @if (screenings.Any())
+    {
+        <div class="col-auto">
+            <label class="form-label">Screening</label>
+            <select class="form-select" @key="selectedFilmId" @onchange="OnScreeningChangedAsync">
+                <option value="">— select screening —</option>
+                @foreach (var s in screenings)
+                {
+                    <option value="@s.Id">
+                        @s.StartTime.ToString("ddd d MMM, HH:mm") — @s.Room.Name
+                        (@(s.Room.SeatsNum - takenSeats.Count) left)
+                    </option>
+                }
+            </select>
+        </div>
+    }
+</div>
+
+@if (selectedScreening is not null)
+{
+    <h4>Seats — @selectedScreening.Room.Name</h4>
+    <div class="d-flex flex-wrap gap-1 mb-4">
+        @for (int i = 1; i <= selectedScreening.Room.SeatsNum; i++)
+        {
+            int seat = i;
+            bool taken    = takenSeats.Contains(seat);
+            bool selected = selectedSeats.Contains(seat);
+
+            <button class="btn btn-sm @(taken ? "btn-secondary disabled" : selected ? "btn-success" : "btn-outline-primary")"
+                    style="width:48px"
+                    disabled="@taken"
+                    @onclick="() => ToggleSeat(seat)">
+                @seat
+            </button>
+        }
+    </div>
+
+    <div class="card p-3 mb-3" style="max-width:440px">
+        <h5>Customer Details <span class="text-muted fw-normal small">(optional)</span></h5>
+        <p class="text-muted small mb-2">
+            Enter a registered customer's email to link this order to their account.
+            Leave blank to record the order under the cinema's contact info.
+        </p>
+        <div class="mb-2">
+            <label class="form-label">Customer Email</label>
+            <input class="form-control" type="email" @bind="customerEmail"
+                   placeholder="customer@example.com" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Customer Phone</label>
+            <input class="form-control" type="tel" @bind="customerPhone"
+                   placeholder="Optional — used only if email is not registered" />
+        </div>
+
+        @if (customerLookupMessage is not null)
+        {
+            <p class="small @(customerFound ? "text-success" : "text-muted")">
+                @customerLookupMessage
+            </p>
+        }
+    </div>
+
+    @if (errorMessage is not null)
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <button class="btn btn-primary"
+            disabled="@(!selectedSeats.Any())"
+            @onclick="SellAsync">
+        Sell @selectedSeats.Count Ticket@(selectedSeats.Count == 1 ? "" : "s")
+    </button>
+}
+
+@code {
+    private List<Film>      films             = [];
+    private List<Screening> screenings        = [];
+    private int             selectedFilmId;
+    private Screening?      selectedScreening;
+    private HashSet<int>    takenSeats        = [];
+    private HashSet<int>    selectedSeats     = [];
+    private string?         customerEmail;
+    private string?         customerPhone;
+    private string?         customerLookupMessage;
+    private bool            customerFound;
+    private string?         errorMessage;
+
+    protected override async Task OnInitializedAsync() =>
+        films = await FilmService.GetAllAsync();
+
+    private async Task OnFilmChangedAsync(ChangeEventArgs e)
+    {
+        selectedScreening     = null;
+        selectedSeats.Clear();
+        takenSeats.Clear();
+
+        if (int.TryParse(e.Value?.ToString(), out int filmId))
+        {
+            selectedFilmId = filmId;
+            screenings     = await ScreeningService.GetUpcomingByFilmAsync(filmId);
+        }
+        else
+        {
+            selectedFilmId = 0;
+            screenings     = [];
+        }
+    }
+
+    private async Task OnScreeningChangedAsync(ChangeEventArgs e)
+    {
+        selectedSeats.Clear();
+        if (!int.TryParse(e.Value?.ToString(), out int screeningId)) return;
+
+        selectedScreening = await ScreeningService.GetByIdAsync(screeningId);
+        takenSeats = (await TicketService.GetTakenSeatsAsync(screeningId)).ToHashSet();
+    }
+
+    private void ToggleSeat(int seat)
+    {
+        if (!selectedSeats.Remove(seat))
+            selectedSeats.Add(seat);
+    }
+
+    private async Task SellAsync()
+    {
+        errorMessage          = null;
+        customerLookupMessage = null;
+        customerFound         = false;
+
+        string? resolvedUserId    = null;
+        string? resolvedEmail     = null;
+        string? resolvedPhone     = null;
+
+        if (!string.IsNullOrWhiteSpace(customerEmail))
+        {
+            // Try to link the order to a registered account.
+            var customer = await UserManager.FindByEmailAsync(customerEmail.Trim());
+            if (customer is not null)
+            {
+                resolvedUserId        = customer.Id;
+                customerFound         = true;
+                customerLookupMessage = $"Linked to registered account: {customer.Email}";
+            }
+            else
+            {
+                // Email provided but not registered — treat as a named guest.
+                resolvedEmail         = customerEmail.Trim();
+                resolvedPhone         = string.IsNullOrWhiteSpace(customerPhone)
+                                            ? CinemaConstants.CinemaPhone
+                                            : customerPhone.Trim();
+                customerLookupMessage = "Email not found in system — recorded as guest.";
+            }
+        }
+        else
+        {
+            // No customer info — fall back to cinema's contact details.
+            resolvedEmail = CinemaConstants.CinemaEmail;
+            resolvedPhone = CinemaConstants.CinemaPhone;
+        }
+
+        var (success, error) = await TicketService.BuyTicketsAsync(
+            screeningId: selectedScreening!.Id,
+            seatNumbers: [.. selectedSeats],
+            userId:      resolvedUserId,
+            guestEmail:  resolvedEmail,
+            guestPhone:  resolvedPhone
+        );
+
+        if (success)
+            Nav.NavigateTo("/cashier/confirm");
+        else
+            errorMessage = error;
+    }
+}

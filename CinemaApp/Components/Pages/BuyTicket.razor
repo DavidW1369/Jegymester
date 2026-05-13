@@ -1,0 +1,120 @@
+@page "/buy/{ScreeningId:int}"
+@rendermode InteractiveServer
+@inject TicketService TicketService
+@inject ScreeningService ScreeningService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Nav
+
+<PageTitle>Buy Tickets</PageTitle>
+
+@if (screening is null)
+{
+    <p>Screening not found.</p>
+}
+else
+{
+    <h1>@screening.Film.Title</h1>
+    <p class="text-muted">
+        @screening.StartTime.ToString("dddd d MMMM yyyy, HH:mm")
+        &nbsp;·&nbsp; @screening.Room.Name
+        &nbsp;·&nbsp; @(screening.Room.SeatsNum - takenSeats.Count) seats remaining
+    </p>
+
+    <h4>Select Seats</h4>
+    <div class="d-flex flex-wrap gap-1 mb-3">
+        @for (int i = 1; i <= screening.Room.SeatsNum; i++)
+        {
+            int seat = i;
+            bool taken    = takenSeats.Contains(seat);
+            bool selected = selectedSeats.Contains(seat);
+
+            <button class="btn btn-sm @(taken ? "btn-secondary disabled" : selected ? "btn-success" : "btn-outline-primary")"
+                    style="width:48px"
+                    disabled="@taken"
+                    @onclick="() => ToggleSeat(seat)">
+                @seat
+            </button>
+        }
+    </div>
+
+    <div class="mb-2 small">
+        <span class="badge bg-outline-primary border me-1">&nbsp;&nbsp;</span> Available &nbsp;
+        <span class="badge bg-success me-1">&nbsp;&nbsp;</span> Selected &nbsp;
+        <span class="badge bg-secondary me-1">&nbsp;&nbsp;</span> Taken
+    </div>
+
+    @if (!isLoggedIn)
+    {
+        <div class="card p-3 mb-3" style="max-width:400px">
+            <h5>Contact Information</h5>
+            <p class="text-muted small">Required for guest purchases.</p>
+            <div class="mb-2">
+                <label class="form-label">Email</label>
+                <input class="form-control" type="email" @bind="guestEmail" placeholder="you@example.com" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Phone</label>
+                <input class="form-control" type="tel" @bind="guestPhone" placeholder="+1 555 000 0000" />
+            </div>
+        </div>
+    }
+
+    @if (errorMessage is not null)
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <button class="btn btn-primary"
+            disabled="@(!selectedSeats.Any())"
+            @onclick="ConfirmPurchaseAsync">
+        Buy @selectedSeats.Count Ticket@(selectedSeats.Count == 1 ? "" : "s")
+    </button>
+    <a class="btn btn-link ms-2" href="/film/@screening.FilmId">Back</a>
+}
+
+@code {
+    [Parameter] public int ScreeningId { get; set; }
+
+    private Screening?      screening;
+    private HashSet<int>    takenSeats    = [];
+    private HashSet<int>    selectedSeats = [];
+    private bool            isLoggedIn;
+    private string?         currentUserId;
+    private string?         guestEmail;
+    private string?         guestPhone;
+    private string?         errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        screening = await ScreeningService.GetByIdAsync(ScreeningId);
+        if (screening is not null)
+            takenSeats = (await TicketService.GetTakenSeatsAsync(ScreeningId)).ToHashSet();
+
+        var auth = await AuthStateProvider.GetAuthenticationStateAsync();
+        isLoggedIn    = auth.User.Identity?.IsAuthenticated ?? false;
+        currentUserId = auth.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    }
+
+    private void ToggleSeat(int seat)
+    {
+        if (!selectedSeats.Remove(seat))
+            selectedSeats.Add(seat);
+    }
+
+    private async Task ConfirmPurchaseAsync()
+    {
+        errorMessage = null;
+        var (success, error) = await TicketService.BuyTicketsAsync(
+            screeningId: ScreeningId,
+            seatNumbers: [.. selectedSeats],
+            userId:      isLoggedIn ? currentUserId : null,
+            guestEmail:  guestEmail,
+            guestPhone:  guestPhone
+        );
+
+        if (success)
+            Nav.NavigateTo(isLoggedIn ? "/my-tickets" : "/");
+        else
+            errorMessage = error;
+    }
+}

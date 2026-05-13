@@ -1,0 +1,67 @@
+@page "/profile"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject UserService UserService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Profile</PageTitle>
+<h1>My Profile</h1>
+
+@if (user is not null)
+{
+    <div class="card" style="max-width:420px">
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input class="form-control" type="email" @bind="email" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Phone Number</label>
+                <input class="form-control" type="tel" @bind="phone" />
+            </div>
+
+            @if (successMessage is not null)
+            {
+                <div class="alert alert-success">@successMessage</div>
+            }
+            @if (errorMessage is not null)
+            {
+                <div class="alert alert-danger">@errorMessage</div>
+            }
+
+            <button class="btn btn-primary" @onclick="SaveAsync">Save Changes</button>
+        </div>
+    </div>
+}
+
+@code {
+    private AppUser? user;
+    private string   email        = string.Empty;
+    private string   phone        = string.Empty;
+    private string?  successMessage;
+    private string?  errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth   = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userId = auth.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (userId is null) return;
+
+        user  = await UserService.GetByIdAsync(userId);
+        email = user?.Email  ?? string.Empty;
+        phone = user?.PhoneNumber ?? string.Empty;
+    }
+
+    private async Task SaveAsync()
+    {
+        successMessage = null;
+        errorMessage   = null;
+        if (user is null) return;
+
+        var (success, error) = await UserService.UpdateContactInfoAsync(user.Id, email, phone);
+        if (success)
+            successMessage = "Profile updated.";
+        else
+            errorMessage = error;
+    }
+}

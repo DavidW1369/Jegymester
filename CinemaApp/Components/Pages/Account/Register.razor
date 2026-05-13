@@ -1,0 +1,53 @@
+@page "/register"
+
+<PageTitle>Register</PageTitle>
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title mb-4">Create Account</h3>
+
+                <form method="post" action="/auth/register">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control @(Field == "email" ? "is-invalid" : "")"
+                               type="email" name="email" value="@Email" required />
+                        @if (Field == "email" && Msg is not null)
+                        {
+                            <div class="invalid-feedback">@Msg</div>
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <input class="form-control" type="tel" name="phone"
+                               value="@Phone" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input class="form-control @(Field == "password" ? "is-invalid" : "")"
+                               type="password" name="password" minlength="6" required />
+                        @if (Field == "password" && Msg is not null)
+                        {
+                            <div class="invalid-feedback">@Msg</div>
+                        }
+                    </div>
+                    <button class="btn btn-primary w-100" type="submit">Register</button>
+                </form>
+
+                <p class="mt-3 text-center small">
+                    Already have an account? <a href="/login">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // On failure the endpoint redirects back with the original non-sensitive values
+    // so the user only has to retype the password (or fix the flagged field).
+    [SupplyParameterFromQuery] private string? Email { get; set; }
+    [SupplyParameterFromQuery] private string? Phone { get; set; }
+    [SupplyParameterFromQuery] private string? Field { get; set; }  // "email" or "password"
+    [SupplyParameterFromQuery] private string? Msg   { get; set; }
+}

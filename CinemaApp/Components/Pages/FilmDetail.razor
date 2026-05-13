@@ -1,0 +1,71 @@
+@page "/film/{FilmId:int}"
+@rendermode InteractiveServer
+@inject FilmService FilmService
+@inject ScreeningService ScreeningService
+
+<PageTitle>@film?.Title</PageTitle>
+
+@if (film is null)
+{
+    <p>Film not found.</p>
+}
+else
+{
+    <h1>@film.Title</h1>
+    <p class="text-muted">@film.DurationMinutes minutes</p>
+    <p>@film.Description</p>
+
+    <h3 class="mt-4">Upcoming Screenings</h3>
+
+    @if (!screenings.Any())
+    {
+        <p>No upcoming screenings.</p>
+    }
+    else
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Date &amp; Time</th>
+                    <th>Room</th>
+                    <th>Seats Available</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in screenings)
+                {
+                    var available = s.Room.SeatsNum - s.Tickets.Count;
+                    <tr>
+                        <td>@s.StartTime.ToString("ddd d MMM yyyy, HH:mm")</td>
+                        <td>@s.Room.Name</td>
+                        <td>@available / @s.Room.SeatsNum</td>
+                        <td>
+                            @if (available > 0)
+                            {
+                                <a class="btn btn-success btn-sm" href="/buy/@s.Id">Buy Ticket</a>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Sold Out</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    [Parameter] public int FilmId { get; set; }
+
+    private Film? film;
+    private List<Screening> screenings = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        film       = await FilmService.GetByIdAsync(FilmId);
+        screenings = await ScreeningService.GetUpcomingByFilmAsync(FilmId);
+    }
+}

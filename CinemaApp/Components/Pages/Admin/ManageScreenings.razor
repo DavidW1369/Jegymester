@@ -1,0 +1,76 @@
+@page "/admin/screenings"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
+@inject ScreeningService ScreeningService
+
+<PageTitle>Manage Screenings</PageTitle>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Screenings</h1>
+    <a class="btn btn-success" href="/admin/screenings/edit">+ New Screening</a>
+</div>
+
+@if (screenings is null)
+{
+    <p>Loading…</p>
+}
+else if (!screenings.Any())
+{
+    <p>No screenings scheduled.</p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Film</th>
+                <th>Date &amp; Time</th>
+                <th>Room</th>
+                <th>Tickets Sold</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in screenings)
+            {
+                <tr class="@(s.StartTime < DateTime.UtcNow ? "text-muted" : "")">
+                    <td>@s.Film.Title</td>
+                    <td>@s.StartTime.ToString("ddd d MMM yyyy, HH:mm")</td>
+                    <td>@s.Room.Name</td>
+                    <td>@s.Tickets.Count / @s.Room.SeatsNum</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-secondary me-1"
+                           href="/admin/screenings/edit/@s.Id">Edit</a>
+                        <button class="btn btn-sm btn-outline-danger"
+                                @onclick="() => DeleteAsync(s.Id)"
+                                disabled="@(s.Tickets.Count > 0)">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (deleteError is not null)
+{
+    <div class="alert alert-danger">@deleteError</div>
+}
+
+@code {
+    private List<Screening>? screenings;
+    private string?          deleteError;
+
+    protected override async Task OnInitializedAsync() =>
+        screenings = await ScreeningService.GetAllAsync();
+
+    private async Task DeleteAsync(int id)
+    {
+        deleteError = null;
+        var success = await ScreeningService.DeleteAsync(id);
+        if (success)
+            screenings = await ScreeningService.GetAllAsync();
+        else
+            deleteError = "Cannot delete a screening that has tickets sold.";
+    }
+}

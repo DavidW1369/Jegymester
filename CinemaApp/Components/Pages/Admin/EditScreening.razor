@@ -1,0 +1,108 @@
+@page "/admin/screenings/edit"
+@page "/admin/screenings/edit/{Id:int}"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
+@inject ScreeningService ScreeningService
+@inject FilmService FilmService
+@inject NavigationManager Nav
+
+<PageTitle>@(Id is null ? "New Screening" : "Edit Screening")</PageTitle>
+<h1>@(Id is null ? "New Screening" : "Edit Screening")</h1>
+
+<div class="card" style="max-width:480px">
+    <div class="card-body">
+        <div class="mb-3">
+            <label class="form-label">Film</label>
+            <select class="form-select" @bind="filmId">
+                <option value="0">— select film —</option>
+                @foreach (var f in films)
+                {
+                    <option value="@f.Id">@f.Title</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Room</label>
+            <select class="form-select" @bind="roomId">
+                <option value="0">— select room —</option>
+                @foreach (var r in rooms)
+                {
+                    <option value="@r.Id">@r.Name (@r.SeatsNum seats)</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Date &amp; Time</label>
+            <input class="form-control" type="datetime-local" @bind="startTime" />
+        </div>
+
+        @if (errorMessage is not null)
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary" @onclick="SaveAsync">Save</button>
+            <a class="btn btn-outline-secondary" href="/admin/screenings">Cancel</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private List<Film> films = [];
+    private List<Room> rooms = [];
+    private int        filmId;
+    private int        roomId;
+    private DateTime   startTime = DateTime.Now.AddDays(1);
+    private string?    errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        films = await FilmService.GetAllAsync();
+        rooms = await ScreeningService.GetRoomsAsync();
+
+        if (Id is not null)
+        {
+            var s = await ScreeningService.GetByIdAsync(Id.Value);
+            if (s is not null)
+            {
+                filmId    = s.FilmId;
+                roomId    = s.RoomId;
+                startTime = s.StartTime;
+            }
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = null;
+
+        if (filmId == 0) { errorMessage = "Select a film."; return; }
+        if (roomId == 0) { errorMessage = "Select a room."; return; }
+        if (startTime <= DateTime.UtcNow) { errorMessage = "Start time must be in the future."; return; }
+
+        if (Id is null)
+        {
+            await ScreeningService.CreateAsync(new Screening
+            {
+                FilmId    = filmId,
+                RoomId    = roomId,
+                StartTime = startTime.ToUniversalTime()
+            });
+        }
+        else
+        {
+            var s = await ScreeningService.GetByIdAsync(Id.Value);
+            if (s is null) { errorMessage = "Screening not found."; return; }
+
+            s.FilmId    = filmId;
+            s.RoomId    = roomId;
+            s.StartTime = startTime.ToUniversalTime();
+            await ScreeningService.UpdateAsync(s);
+        }
+
+        Nav.NavigateTo("/admin/screenings");
+    }
+}

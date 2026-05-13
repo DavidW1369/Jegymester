@@ -1,0 +1,77 @@
+@page "/admin/films"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
+@inject FilmService FilmService
+
+<PageTitle>Manage Films</PageTitle>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Films</h1>
+    <a class="btn btn-success" href="/admin/films/edit">+ New Film</a>
+</div>
+
+@if (films is null)
+{
+    <p>Loading…</p>
+}
+else if (!films.Any())
+{
+    <p>No films yet.</p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Duration</th>
+                <th>Description</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var film in films)
+            {
+                <tr>
+                    <td>@film.Title</td>
+                    <td>@film.DurationMinutes min</td>
+                    <td class="text-muted small">
+                        @(film.Description.Length > 80
+                            ? film.Description[..80] + "…"
+                            : film.Description)
+                    </td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-secondary me-1"
+                           href="/admin/films/edit/@film.Id">Edit</a>
+                        <button class="btn btn-sm btn-outline-danger"
+                                @onclick="() => DeleteAsync(film.Id)">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (deleteError is not null)
+{
+    <div class="alert alert-danger">@deleteError</div>
+}
+
+@code {
+    private List<Film>? films;
+    private string?     deleteError;
+
+    protected override async Task OnInitializedAsync() =>
+        films = await FilmService.GetAllAsync();
+
+    private async Task DeleteAsync(int id)
+    {
+        deleteError = null;
+        var success = await FilmService.DeleteAsync(id);
+        if (success)
+            films = await FilmService.GetAllAsync();
+        else
+            deleteError = "Cannot delete a film that has upcoming screenings.";
+    }
+}

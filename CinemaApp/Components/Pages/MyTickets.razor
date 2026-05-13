@@ -1,0 +1,103 @@
+@page "/my-tickets"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject TicketService TicketService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>My Tickets</PageTitle>
+<h1>My Tickets</h1>
+
+@if (orders is null)
+{
+    <p>Loading…</p>
+}
+else if (!orders.Any())
+{
+    <p>You have no ticket orders yet. <a href="/">Browse films</a></p>
+}
+else
+{
+    @foreach (var order in orders)
+    {
+        var screening = order.Tickets.FirstOrDefault()?.Screening;
+        bool isFuture = screening?.StartTime > DateTime.UtcNow;
+        bool canCancel = screening is not null &&
+                         screening.StartTime > DateTime.UtcNow.AddHours(4);
+
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between">
+                <span>Order #@order.Id &nbsp;·&nbsp; @order.OrderDate.ToString("g")</span>
+                @if (canCancel)
+                {
+                    <button class="btn btn-sm btn-outline-danger"
+                            @onclick="() => CancelAsync(order.Id)">
+                        Cancel Order
+                    </button>
+                }
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (var ticket in order.Tickets)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>
+                            <strong>@ticket.Screening.Film.Title</strong>
+                            &nbsp;·&nbsp; @ticket.Screening.StartTime.ToString("g")
+                            &nbsp;·&nbsp; @ticket.Screening.Room.Name
+                            &nbsp;·&nbsp; Seat #@ticket.SeatNumber
+                        </span>
+                        <span>
+                            @if (ticket.IsConfirmed)
+                            {
+                                <span class="badge bg-success">Confirmed</span>
+                            }
+                            else if (ticket.Screening.StartTime < DateTime.UtcNow)
+                            {
+                                <span class="badge bg-secondary">Past</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Ticket #@ticket.Id</span>
+                            }
+                        </span>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+}
+
+@if (cancelError is not null)
+{
+    <div class="alert alert-danger">@cancelError</div>
+}
+
+@code {
+    private List<TicketOrder>? orders;
+    private string?            cancelError;
+    private string?            userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await AuthStateProvider.GetAuthenticationStateAsync();
+        userId   = auth.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        await LoadOrdersAsync();
+    }
+
+    private async Task LoadOrdersAsync()
+    {
+        if (userId is not null)
+            orders = await TicketService.GetOrdersForUserAsync(userId);
+    }
+
+    private async Task CancelAsync(int orderId)
+    {
+        cancelError = null;
+        if (userId is null) return;
+
+        var (success, error) = await TicketService.CancelOrderAsync(orderId, userId);
+        if (success)
+            await LoadOrdersAsync();
+        else
+            cancelError = error;
+    }
+}

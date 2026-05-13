@@ -1,0 +1,24 @@
+@using CinemaApp.Components.Layout
+
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
+            <NotAuthorized>
+                @if (context.User.Identity?.IsAuthenticated == true)
+                {
+                    <p class="text-danger m-4">You do not have permission to view this page.</p>
+                }
+                else
+                {
+                    <meta http-equiv="refresh" content="0;url=/login" />
+                }
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="typeof(MainLayout)">
+            <h1>Page not found</h1>
+        </LayoutView>
+    </NotFound>
+</Router>

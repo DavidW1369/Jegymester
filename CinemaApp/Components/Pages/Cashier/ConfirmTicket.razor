@@ -1,0 +1,79 @@
+@page "/cashier/confirm"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Cashier,Admin")]
+@inject TicketService TicketService
+
+<PageTitle>Confirm Ticket</PageTitle>
+<h1>Confirm Ticket</h1>
+
+<div class="d-flex gap-2 mb-4" style="max-width:320px">
+    <input class="form-control" type="number" min="1"
+           @bind="ticketId" placeholder="Ticket ID" />
+    <button class="btn btn-primary" @onclick="LookupAsync">Look Up</button>
+</div>
+
+@if (notFound)
+{
+    <div class="alert alert-warning">Ticket #@ticketId not found.</div>
+}
+
+@if (ticket is not null)
+{
+    <div class="card" style="max-width:480px">
+        <div class="card-body">
+            <h5 class="card-title">Ticket #@ticket.Id</h5>
+            <p><strong>Film:</strong> @ticket.Screening.Film.Title</p>
+            <p><strong>Screening:</strong> @ticket.Screening.StartTime.ToString("g")</p>
+            <p><strong>Room:</strong> @ticket.Screening.Room.Name</p>
+            <p><strong>Seat:</strong> #@ticket.SeatNumber</p>
+            <p>
+                <strong>Order:</strong> #@ticket.TicketOrder.Id
+                &nbsp;·&nbsp;
+                @(ticket.TicketOrder.UserId is not null
+                    ? $"Registered user"
+                    : $"Guest — {ticket.TicketOrder.GuestEmail}")
+            </p>
+
+            @if (ticket.IsConfirmed)
+            {
+                <div class="alert alert-success mb-0">✔ Already confirmed.</div>
+            }
+            else
+            {
+                <button class="btn btn-success" @onclick="ConfirmAsync">
+                    Confirm &amp; Admit
+                </button>
+            }
+        </div>
+    </div>
+}
+
+@if (confirmError is not null)
+{
+    <div class="alert alert-danger mt-2">@confirmError</div>
+}
+
+@code {
+    private int     ticketId;
+    private Ticket? ticket;
+    private bool    notFound;
+    private string? confirmError;
+
+    private async Task LookupAsync()
+    {
+        notFound     = false;
+        confirmError = null;
+        ticket       = await TicketService.GetTicketByIdAsync(ticketId);
+        if (ticket is null) notFound = true;
+    }
+
+    private async Task ConfirmAsync()
+    {
+        confirmError = null;
+        var (success, error) = await TicketService.ConfirmTicketAsync(ticket!.Id);
+        if (success)
+            ticket = await TicketService.GetTicketByIdAsync(ticket.Id); // refresh
+        else
+            confirmError = error;
+    }
+}

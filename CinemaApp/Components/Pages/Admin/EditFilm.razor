@@ -1,0 +1,92 @@
+@page "/admin/films/edit"
+@page "/admin/films/edit/{Id:int}"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
+@inject FilmService FilmService
+@inject NavigationManager Nav
+
+<PageTitle>@(Id is null ? "New Film" : "Edit Film")</PageTitle>
+<h1>@(Id is null ? "New Film" : "Edit Film")</h1>
+
+<div class="card" style="max-width:540px">
+    <div class="card-body">
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input class="form-control" @bind="title" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Duration (minutes)</label>
+            <input class="form-control" type="number" min="1" @bind="durationMinutes" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" rows="4" @bind="description"></textarea>
+        </div>
+
+        @if (errorMessage is not null)
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary" @onclick="SaveAsync">Save</button>
+            <a class="btn btn-outline-secondary" href="/admin/films">Cancel</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private string  title           = string.Empty;
+    private string  description     = string.Empty;
+    private int     durationMinutes = 90;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id is not null)
+        {
+            var film = await FilmService.GetByIdAsync(Id.Value);
+            if (film is not null)
+            {
+                title           = film.Title;
+                description     = film.Description;
+                durationMinutes = film.DurationMinutes;
+            }
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = null;
+
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            errorMessage = "Title is required.";
+            return;
+        }
+
+        if (Id is null)
+        {
+            await FilmService.CreateAsync(new Film
+            {
+                Title           = title,
+                Description     = description,
+                DurationMinutes = durationMinutes
+            });
+        }
+        else
+        {
+            var film = await FilmService.GetByIdAsync(Id.Value);
+            if (film is null) { errorMessage = "Film not found."; return; }
+
+            film.Title           = title;
+            film.Description     = description;
+            film.DurationMinutes = durationMinutes;
+            await FilmService.UpdateAsync(film);
+        }
+
+        Nav.NavigateTo("/admin/films");
+    }
+}
